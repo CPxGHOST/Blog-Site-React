@@ -1,0 +1,33 @@
+.nav-bar {
+  background-color: rgb(20, 158, 163);
+  height: 5rem;
+  width: 100%;
+}
+.nav-bar-elements {
+  display: flex;
+  position: absolute;
+  justify-content: flex-start;
+}
+.nav-bar-element {
+  color: #fff;
+  text-decoration: none;
+  margin: 1.3rem;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 1.5rem;
+}
+.add-blog{
+  position: relative;
+  color: #fff;
+  text-decoration: none;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 1.5rem;
+  right: -200%;
+  margin-top: 1.2rem;
+}
+.nav-bar-element:hover{
+    color: darkslategrey;
+}
+.add-blog:hover{
+    color: darkslategrey;
+}
+
