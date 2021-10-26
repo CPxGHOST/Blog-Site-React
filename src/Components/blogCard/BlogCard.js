@@ -12,7 +12,7 @@ const BlogCard = () => {
     <p className="card-text">Content of the blog.</p>
     <div className = "buttons">
     <NavLink to="/viewblog" className="btn btn-primary">View Blog</NavLink>
-    <NavLink to="/updateblog" className="btn btn-info">Update Blog</NavLink>
+    <NavLink to="/updateblog" className="btn btn-success">Update Blog</NavLink>
     <NavLink to="/deleteblog" className="btn btn-danger">Delete Blog</NavLink> 
     </div>
   </div>
