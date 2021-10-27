@@ -1,100 +1,80 @@
-import React from "react";
-import { NavLink } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Redirect } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { connect } from "react-redux";
-import * as blogActions from "../../redux/actions/blogAction";
+import { loadBlogs, saveBlog } from "../../redux/actions/blogAction";
 import PropTypes from "prop-types";
-import { bindActionCreators } from "redux";
+import BlogForm from "./BlogForm";
+import { newBlog } from "./../../../tools/mockData";
 
-class AddBlog extends React.Component {
-  state = {
-    blog: {
-      title: "",
-      content: "",
-      category: "",
-    },
-  };
+const AddBlog = ({ blogs, loadBlogs, saveBlog, history, ...props }) => {
+  const [blog, setBlog] = useState({ ...props.blog });
+  const [errors, setErrors] = useState({});
+  useEffect(() => {
+    if (blogs.length === 0) {
+      loadBlogs().catch((error) => {
+        console.log(error);
+      });
+    } else {
+      setBlog({ ...props.blog });
+    }
+  }, [props.blog]);
 
-  handleChange = (event) => {
+  const handleChange = (event) => {
     const name = event.target.name;
     const value = event.target.value;
-    const blog = { ...this.state.blog, [name]: value };
-    this.setState({ blog });
-    console.log(this.state.blog);
+    setBlog((prevBlog) => ({
+      ...prevBlog,
+      [name]: value,
+    }));
   };
 
-  handleSubmit = (event) => {
-    console.log(this.state.blog);
+  const handleSave = (event) => {
+    console.log(blog);
     event.preventDefault();
-    this.props.actions.createBlog(this.state.blog);
+    saveBlog(blog).then(() => {
+      console.log(blog);
+      // history.push("/");
+    });
   };
 
-  render() {
-    return (
-      <form onSubmit={this.handleSubmit}>
-        <div className="mb-3">
-          <label className="form-label">Title</label>
-          <input
-            className="form-control"
-            type="text"
-            name="title"
-            onChange={this.handleChange}
-            value={this.state.blog.title}
-          />
-        </div>
-        <div className="mb-3">
-          <label className="form-label">Category</label>
-          <input
-            className="form-control"
-            type="text"
-            name="category"
-            onChange={this.handleChange}
-            value={this.state.blog.category}
-          />
-        </div>
-        <div className="mb-3">
-          <label className="form-label">Content</label>
-          <textarea
-            className="form-control"
-            id="exampleFormControlTextarea1"
-            name="content"
-            rows="10"
-            cols="200"
-            onChange={this.handleChange}
-            value={this.state.blog.content}
-          ></textarea>
-        </div>
-        <button type="submit" className="btn btn-primary btn-lg">
-          Save
-        </button>
-        <NavLink
-          to="/"
-          exact
-          className="btn btn-danger btn-lg"
-          style={{ marginLeft: 75 }}
-        >
-          All Blogs
-        </NavLink>
-      </form>
-    );
-  }
-}
-
-AddBlog.propTypes = {
-  blogs: PropTypes.array.isRequired,
-  actions: PropTypes.object.isRequired,
+  return (
+    <BlogForm
+      blog={blog}
+      errors={errors}
+      onChange={handleChange}
+      onSave={handleSave}
+    />
+  );
 };
 
-function mapStateToProps(state) {
+AddBlog.propTypes = {
+  blog: PropTypes.object.isRequired,
+  blogs: PropTypes.array.isRequired,
+  loadBlogs: PropTypes.func.isRequired,
+  saveBlog: PropTypes.func.isRequired,
+  history: PropTypes.object.isRequired,
+};
+
+export function getBlogById(blogs, id) {
+  return blogs.find(blog=> blog.id == id) || null;
+}
+
+function mapStateToProps(state, ownProps) {
+  const id = ownProps.match.params.id ;
+  
+  const blog =
+   id && state.blogs.length > 0 ? getBlogById(state.blogs, id) : newBlog;
+
   return {
+    blog: blog,
     blogs: state.blogs,
   };
 }
 
-function mapDispatchToProps(dispatch) {
-  return {
-    actions: bindActionCreators(blogActions, dispatch),
-  };
-}
+const mapDispatchToProps = {
+  loadBlogs,
+  saveBlog,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddBlog);

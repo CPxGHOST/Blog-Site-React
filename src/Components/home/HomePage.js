@@ -1,18 +1,27 @@
 import React from "react";
 import "../../index.css";
-import "../blogCard/BlogCard.css"
+import "../blogCard/BlogCard.css";
 import { connect } from "react-redux";
 import * as blogActions from "../../redux/actions/blogAction";
 import PropTypes from "prop-types";
 import { bindActionCreators } from "redux";
 import { NavLink } from "react-router-dom";
+import { toast } from "react-toastify";
 
 class HomePage extends React.Component {
   componentDidMount() {
-    this.props.actions.loadBlogs().catch((error) => {
-      console.log(error);
-    });
+    const { blogs, actions } = this.props;
+    if (blogs.length === 0) {
+      actions.loadBlogs().catch((error) => {
+        console.log(error);
+      });
+    }
   }
+
+  handleDeleteBlog = (blog) => {
+    toast.success("Blog Deleted");
+    this.props.actions.deleteBlog(blog);
+  };
 
   render() {
     return (
@@ -25,15 +34,15 @@ class HomePage extends React.Component {
                 <h5 className="card-title">{blog.title}</h5>
                 <p className="card-text">{blog.content}</p>
                 <div className="buttons">
-                  <NavLink to="/viewblog" className="btn btn-primary">
-                    View Blog
-                  </NavLink>
-                  <NavLink to="/updateblog" className="btn btn-success">
+                  <NavLink to={"add/" + blog.id} className="btn btn-success">
                     Update Blog
                   </NavLink>
-                  <NavLink to="/deleteblog" className="btn btn-danger">
+                  <button
+                    className="btn btn-danger"
+                    onClick={() => this.handleDeleteBlog(blog)}
+                  >
                     Delete Blog
-                  </NavLink>
+                  </button>
                 </div>
               </div>
             </div>
@@ -57,7 +66,10 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    actions: bindActionCreators(blogActions, dispatch),
+    actions: {
+      loadBlogs: bindActionCreators(blogActions.loadBlogs, dispatch),
+      deleteBlog: bindActionCreators(blogActions.deleteBlog, dispatch),
+    },
   };
 }
 
