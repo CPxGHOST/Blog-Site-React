@@ -1,6 +1,9 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { connect } from "react-redux";
+import * as blogActions from "../../redux/actions/blogAction";
+import PropTypes from "prop-types";
 
 class AddBlog extends React.Component {
   state = {
@@ -20,8 +23,9 @@ class AddBlog extends React.Component {
   };
 
   handleSubmit = (event) => {
+    console.log(this.state.blog);
     event.preventDefault();
-    alert(`Title: ${this.state.blog.title}`);
+    this.props.dispatch(blogActions.createBlog(this.state.blog));
   };
 
   render() {
@@ -50,7 +54,7 @@ class AddBlog extends React.Component {
         <div className="mb-3">
           <label className="form-label">Content</label>
           <textarea
-            clasName="form-control"
+            className="form-control"
             id="exampleFormControlTextarea1"
             name="content"
             rows="10"
@@ -66,13 +70,24 @@ class AddBlog extends React.Component {
           to="/"
           exact
           className="btn btn-danger btn-lg"
-          style={{ marginLeft: 75 }}
-        >
+          style={{ marginLeft: 75 }}>
           All Blogs
         </NavLink>
+
       </form>
     );
   }
 }
 
-export default AddBlog;
+AddBlog.propTypes = {
+  dispatch: PropTypes.func.isRequired,
+  blogs: PropTypes.array.isRequired,
+};
+
+function mapStateToProps(state) {
+  return {
+    blogs: state.blogs,
+  };
+}
+
+export default connect(mapStateToProps)(AddBlog);
