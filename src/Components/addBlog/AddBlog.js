@@ -4,6 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { connect } from "react-redux";
 import * as blogActions from "../../redux/actions/blogAction";
 import PropTypes from "prop-types";
+import { bindActionCreators } from "redux";
 
 class AddBlog extends React.Component {
   state = {
@@ -25,7 +26,7 @@ class AddBlog extends React.Component {
   handleSubmit = (event) => {
     console.log(this.state.blog);
     event.preventDefault();
-    this.props.dispatch(blogActions.createBlog(this.state.blog));
+    this.props.actions.createBlog(this.state.blog);
   };
 
   render() {
@@ -70,18 +71,18 @@ class AddBlog extends React.Component {
           to="/"
           exact
           className="btn btn-danger btn-lg"
-          style={{ marginLeft: 75 }}>
+          style={{ marginLeft: 75 }}
+        >
           All Blogs
         </NavLink>
-
       </form>
     );
   }
 }
 
 AddBlog.propTypes = {
-  dispatch: PropTypes.func.isRequired,
   blogs: PropTypes.array.isRequired,
+  actions: PropTypes.object.isRequired,
 };
 
 function mapStateToProps(state) {
@@ -90,4 +91,10 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps)(AddBlog);
+function mapDispatchToProps(dispatch) {
+  return {
+    actions: bindActionCreators(blogActions, dispatch),
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(AddBlog);

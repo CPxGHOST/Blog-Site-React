@@ -1,1 +1,2 @@
 export const CREATE_BLOG = "CREATE_BLOG";
+export const LOAD_BLOG_SUCCESS = "LOAD_BLOG_SUCCESS";
